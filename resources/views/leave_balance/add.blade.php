@@ -59,8 +59,6 @@
                                 <option value="personal">Personal Leave</option>
                                 <option value="fiesta">Fiesta Leave</option>
                                 <option value="birthday">Birthday Leave</option>
-                                <option value="maternity">Maternity Leave</option>
-                                <option value="paternity">Paternity Leave</option>
                                 <option value="educational">Educational Leave</option>
                                 <!-- Add more leave types as needed -->
                             </select>

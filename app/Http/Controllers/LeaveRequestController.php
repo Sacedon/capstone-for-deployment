@@ -89,11 +89,17 @@ class LeaveRequestController extends Controller
     $interval = $startDate->diff($endDate);
     $number_of_days = $interval->format('%a');
 
-    // Check if the user has enough available leave days for the specific leave type
-    $availableLeaveDays = $user->{'total_' . $leaveType . '_leave_days'};
+    // Initialize availableLeaveDays variable
+    $availableLeaveDays = 0;
 
-    if ($number_of_days > $availableLeaveDays) {
-        return redirect()->back()->with('error', 'Insufficient leave days available.');
+    // Allow Paternity and Maternity leave even if there are no available leave days
+    if (!in_array($leaveType, ['paternity', 'maternity'])) {
+        // Check if the user has enough available leave days for the specific leave type
+        $availableLeaveDays = $user->{'total_' . $leaveType . '_leave_days'};
+
+        if ($number_of_days > $availableLeaveDays) {
+            return redirect()->back()->with('error', 'Insufficient leave days available.');
+        }
     }
 
     // Determine the actual days used and deduct from available leave days
@@ -134,6 +140,7 @@ class LeaveRequestController extends Controller
 
     return redirect()->route('dashboard')->with('success', 'Leave request submitted successfully.');
 }
+
 
 
 
