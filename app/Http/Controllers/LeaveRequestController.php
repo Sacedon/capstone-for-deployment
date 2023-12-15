@@ -98,10 +98,10 @@ class LeaveRequestController extends Controller
 
     // Determine the actual days used and deduct from available leave days
     $daysUsed = min($number_of_days, $availableLeaveDays); // To prevent negative days if more were used than available
-    $user->update([
-        'total_' . $leaveType . '_leave_days' => $user->{'total_' . $leaveType . '_leave_days'} - $daysUsed,
-        'used_' . $leaveType . '_leave_days' => $user->{'used_' . $leaveType . '_leave_days'} + $daysUsed,
-    ]);
+    // $user->update([
+    //     'total_' . $leaveType . '_leave_days' => $user->{'total_' . $leaveType . '_leave_days'} - $daysUsed,
+    //     'used_' . $leaveType . '_leave_days' => $user->{'used_' . $leaveType . '_leave_days'} + $daysUsed,
+    // ]);
 
     // Create a leave request
     $leaveRequest = LeaveRequest::create([
@@ -176,6 +176,16 @@ class LeaveRequestController extends Controller
                         'status' => 'approved', // Final approval
                         'admin_approval' => true, // Mark as admin approved
                     ]);
+
+                    // Deduct leave days after admin approval
+        $user = $leaveRequest->user;
+        $leaveType = $leaveRequest->leave_type;
+        $daysUsed = $leaveRequest->number_of_days;
+
+        $user->update([
+            'total_' . $leaveType . '_leave_days' => $user->{'total_' . $leaveType . '_leave_days'} - $daysUsed,
+            'used_' . $leaveType . '_leave_days' => $user->{'used_' . $leaveType . '_leave_days'} + $daysUsed,
+        ]);
 
                     // Notify the user about admin's approval
                     $leaveRequest->user->notify(new LeaveRequestAccepted($leaveRequest));
